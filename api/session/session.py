@@ -5,7 +5,7 @@ from typing import List
 import uuid
 from pydantic import BaseModel
 
-from session.track import Track
+from session.track import AudioSource
 from pedalboard import Plugin
 from pedalboard.io import AudioFile
 import numpy as np
@@ -22,9 +22,9 @@ class PluginsData(BaseModel):
     plugins: List[ToolCall]
 
 
-class Session:
+class Track:
     def __init__(self, path: str = "./pedalAi/sessions", **kwargs) -> None:
-        self.plugins: List[PluginsData] = []
+        self.plugins: List[Plugin] = []
         self.id = kwargs.get("session_id")
         if self.id is None:
             self.id = "session_{}".format(str(uuid.uuid4()))
@@ -47,16 +47,16 @@ class Session:
             with open(os.path.join(self.save_path, "plugins.pkl"), "wb") as f:
                 pickle.dump(self.plugins, f)
 
-    def add_track(self, track: Track) -> None:
-        self.original = track
+    def add_track(self, audio_source: AudioSource) -> None:
+        self.original = audio_source
 
     def add_plugin(self, plugin: Plugin) -> None:
         self.plugins.append(plugin)
 
     @staticmethod
-    def load(session_id: str) -> Session:
+    def load(session_id: str) -> Track:
         path = os.path.join("./pedalAi/sessions", session_id)
-        session = Session("./pedalAi/sessions", session_id=session_id)
+        session = Track("./pedalAi/sessions", session_id=session_id)
         original_path = os.path.join(path, "original.wav")
         modified_path = os.path.join(path, "modified.wav")
 
@@ -64,7 +64,7 @@ class Session:
             with open(original_path, "rb") as f:
                 samples = f.read()
 
-                original_track = Track(
+                original_track = AudioSource(
                     "original",
                     0.0,
                     "",
@@ -77,7 +77,7 @@ class Session:
             with open(modified_path, "rb") as f:
                 samples = f.read()
 
-                modified_track = Track(
+                modified_track = AudioSource(
                     "original",
                     0.0,
                     "",
@@ -97,19 +97,19 @@ class Session:
         return session
 
     @property
-    def last_modified(self) -> Track:
+    def last_modified(self) -> AudioSource:
         return self._last_modified
 
     @last_modified.setter
-    def last_modified(self, t: Track) -> None:
+    def last_modified(self, t: AudioSource) -> None:
         self._last_modified = t
 
     @property
-    def original(self) -> Track:
+    def original(self) -> AudioSource:
         return self._original
 
     @original.setter
-    def original(self, t: Track) -> None:
+    def original(self, t: AudioSource) -> None:
         self._original = t
 
     def rollback(self) -> None:

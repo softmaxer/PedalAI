@@ -1,7 +1,7 @@
 from typing import Any
 
 
-class Track:
+class AudioSource:
     def __init__(
         self, name: str, length: float, genre: str, contents: Any, path: str
     ) -> None:

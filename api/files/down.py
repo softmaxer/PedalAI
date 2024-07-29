@@ -1,6 +1,6 @@
 import os
 from fastapi import APIRouter
-from session import Session
+from session import Track
 
 # from fastapi.responses import StreamingResponse
 
@@ -17,7 +17,7 @@ from fastapi.responses import FileResponse
 
 @router.get("/{session_id}/download")
 async def download(session_id: str):
-    session = Session.load(session_id)
+    session = Track.load(session_id)
     track_filepath = session.original.path
     if os.path.exists(os.path.join(session.save_path, "modified.wav")):
         track_filepath = session.last_modified.path

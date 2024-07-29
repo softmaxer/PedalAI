@@ -1,7 +1,7 @@
 from typing import Any, List, Tuple
 from agents import get_pedal_effects_from_text, get_plugins_from_tool_calls
-from session import Session
 from session import Track
+from session import AudioSource
 from fastapi import File, Request, UploadFile, APIRouter
 
 
@@ -36,7 +36,7 @@ def apply_plugins(
     start: float,
     end: float,
     plugins: List[ToolCall],
-    session: Session,
+    session: Track,
     session_id: str,
     is_consecutive=False,
 ):
@@ -75,7 +75,7 @@ def apply_plugins(
     with open(filepath, "rb") as f:
         samples = f.read()
 
-    new_track = Track("modified", length, "unknown", samples, "test.wav")
+    new_track = AudioSource("modified", length, "unknown", samples, "test.wav")
 
     session.last_modified = new_track
     session.save()
@@ -87,7 +87,7 @@ def dummy_chain(
     print(messages)
     text = messages[-1]["content"]
     print(text)
-    session = Session.load(session_id)
+    session = Track.load(session_id)
     chat_message, function_calls, tool_recommendations = (
         get_pedal_effects_from_text(text)
     )

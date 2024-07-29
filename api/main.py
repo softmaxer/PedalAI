@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from files import up, down, undo
 from chat import chat
-from session import Session
+from session import Track
 
 
 app = FastAPI()
@@ -27,7 +27,7 @@ app.include_router(undo.router)
 @app.get("/")
 async def home():
     # Create a new session & return the session id
-    s = Session()
+    s = Track()
     s.original = None
     s.last_modified = None
     s.save()

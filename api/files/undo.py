@@ -1,13 +1,13 @@
 from fastapi import APIRouter
 from chat.chat import apply_plugins
-from session import Session
+from session import Track
 
 router = APIRouter()
 
 
 @router.post("/{session_id}/rollback")
 async def rollback(session_id: str):
-    session = Session.load(session_id)
+    session = Track.load(session_id)
     session.rollback()
     if len(session.plugins) == 0:
         apply_plugins(0, 100, [], session, session_id)
