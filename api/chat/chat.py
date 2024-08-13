@@ -54,7 +54,7 @@ def apply_plugins(
 
     samplerate = 44100
 
-    with AudioFile(track_filepath).resampled_to(samplerate) as f:
+    with AudioFile(track_filepath).resampled_to(samplerate) as f:  # type: ignore
         audio = f.read(f.frames)
         start_timestamp = round(((start / 100) * f.frames) / samplerate)
         end_timestamp = round(((end / 100) * f.frames) / samplerate)
@@ -68,7 +68,7 @@ def apply_plugins(
 
     filepath = "pedalAi/sessions/" + session_id + "/modified.wav"
 
-    with AudioFile(filepath, "w", samplerate=samplerate, num_channels=2) as f:
+    with AudioFile(filepath, "w", samplerate=samplerate, num_channels=2) as f:  # type: ignore
         f.write(audio)
         length = f.frames / f.samplerate
 
@@ -108,7 +108,7 @@ def dummy_chain(
             is_consecutive=i != 0,
         )
 
-    return {"role": "assistant", "content": chat_message}, tool_recommendations
+    return {"role": "assistant", "content": chat_message}, tool_recommendations  # type: ignore
 
 
 @router.post("/{session_id}/chat/completions")

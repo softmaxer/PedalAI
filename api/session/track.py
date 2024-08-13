@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import List
+from typing import Iterable, List
 import uuid
 from pydantic import BaseModel
 
@@ -22,7 +22,7 @@ class PluginsData(BaseModel):
 
 class Track:
     def __init__(self, path: str = "./pedalAi/sessions", **kwargs) -> None:
-        self.plugins: List[Plugin] = []
+        self.plugins: Iterable[Plugin] = []
         self.id = kwargs.get("session_id")
         if self.id is None:
             self.id = "session_{}".format(str(uuid.uuid4()))
@@ -41,7 +41,7 @@ class Track:
             with open(self.last_modified.path, "wb") as f:
                 f.write(self.last_modified.contents)
 
-        if len(self.plugins) > 0:
+        if len(self.plugins) > 0:  # type: ignore
             with open(os.path.join(self.save_path, "plugins.pkl"), "wb") as f:
                 pickle.dump(self.plugins, f)
 
@@ -49,7 +49,7 @@ class Track:
         self.original = audio_source
 
     def add_plugin(self, plugin: Plugin) -> None:
-        self.plugins.append(plugin)
+        self.plugins.append(plugin)  # type: ignore
 
     @staticmethod
     def load(session_id: str) -> Track:
@@ -111,4 +111,4 @@ class Track:
         self._original = t
 
     def rollback(self) -> None:
-        del self.plugins[-1]
+        del self.plugins[-1]  # type: ignore
